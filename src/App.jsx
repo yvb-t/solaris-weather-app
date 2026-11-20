@@ -1,8 +1,6 @@
 // ============================================================
-// App.jsx — DailySky Modern Weather Dashboard
-// Arranged exactly like the sample reference screenshot:
-// Left Col: Current Weather, Atmospheric Details, Air Quality
-// Right Col: 24-Hour Trend (with smooth SVG curve), 5-Day Forecast
+// App.jsx — DailySky Premium Dark Glassmorphism Weather Dashboard
+// Full desktop & mobile responsive dark glassmorphism theme
 // ============================================================
 
 import { useState, useEffect, useCallback } from "react";
@@ -12,6 +10,7 @@ import AtmosphericDetailsCard from "./components/AtmosphericDetailsCard";
 import AirQualityCard from "./components/AirQualityCard";
 import HourlyTrendCard from "./components/HourlyTrendCard";
 import DailyForecastCard from "./components/DailyForecastCard";
+import BottomNav from "./components/BottomNav";
 import { fetchCompleteWeatherData } from "./services/weatherApi";
 import "./App.css";
 
@@ -21,7 +20,7 @@ function App() {
   const [error, setError] = useState(null);
   const [lastQuery, setLastQuery] = useState("Kurchatov");
   const [units, setUnits] = useState("metric"); // 'metric' (°C, km/h) or 'imperial' (°F, mph)
-  const [isDark, setIsDark] = useState(false);
+  const [activeTab, setActiveTab] = useState("home");
 
   // Load weather for a given target (city string or {lat, lon, name, state, country})
   const loadWeather = useCallback(async (target, unitSystem = units) => {
@@ -44,7 +43,6 @@ function App() {
 
   // Initial load
   useEffect(() => {
-    // If geolocation permission already granted, use it, else default to "Kurchatov"
     if (navigator.permissions && navigator.permissions.query) {
       navigator.permissions.query({ name: "geolocation" }).then((res) => {
         if (res.state === "granted") {
@@ -77,9 +75,9 @@ function App() {
       (geoErr) => {
         setLoading(false);
         if (geoErr.code === geoErr.PERMISSION_DENIED) {
-          setError("Location access denied. Please allow location permissions in your browser or search by city name.");
+          setError("Location access denied. Please allow location permissions in your browser.");
         } else {
-          setError("Unable to retrieve your current location. Please use the search bar.");
+          setError("Unable to retrieve your current location. Please use search.");
         }
       },
       { timeout: 15000, enableHighAccuracy: true, maximumAge: 0 }
@@ -95,13 +93,22 @@ function App() {
     }
   };
 
-  // Toggle Theme (Dark <-> Light)
-  const handleToggleTheme = () => {
-    setIsDark((prev) => !prev);
+  const handleBottomTabChange = (tab) => {
+    setActiveTab(tab);
+    if (tab === "home") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else if (tab === "search") {
+      const input = document.querySelector(".nav-search-input");
+      if (input) input.focus();
+    } else if (tab === "map") {
+      handleLiveLocation();
+    } else if (tab === "profile") {
+      handleToggleUnits();
+    }
   };
 
   return (
-    <div className={`app-container ${isDark ? "dark-theme" : "light-theme"}`}>
+    <div className="app-container">
       {/* ── Top Navigation Bar ── */}
       <Navbar
         onSearch={(city) => loadWeather(city)}
@@ -109,8 +116,8 @@ function App() {
         onLiveLocation={handleLiveLocation}
         units={units}
         onToggleUnits={handleToggleUnits}
-        isDark={isDark}
-        onToggleTheme={handleToggleTheme}
+        isDark={true}
+        onToggleTheme={handleToggleUnits}
       />
 
       {/* ── Error Banner ── */}
@@ -129,11 +136,11 @@ function App() {
       {loading && !data && (
         <div className="loading-overlay">
           <div className="spinner" />
-          <span>Fetching weather data…</span>
+          <span>Synchronizing atmospheric data…</span>
         </div>
       )}
 
-      {/* ── Main 2-Column Dashboard Grid (Exact Sample Layout) ── */}
+      {/* ── Main 2-Column Dashboard Grid ── */}
       {data && (
         <main className="dashboard-grid">
           {/* ── Left Column (Current Weather, Atmospheric Details, Air Quality) ── */}
@@ -143,13 +150,16 @@ function App() {
             <AirQualityCard aqi={data.aqi} />
           </section>
 
-          {/* ── Right Column (24-Hour Trend, 5-Day Forecast) ── */}
+          {/* ── Right Column (Hourly Trend, 5-Day Forecast) ── */}
           <section className="dashboard-col right-col">
             <HourlyTrendCard hourly={data.hourly} />
             <DailyForecastCard daily={data.daily} />
           </section>
         </main>
       )}
+
+      {/* ── Floating Frosted Glass Bottom Navigation Bar ── */}
+      <BottomNav activeTab={activeTab} onTabChange={handleBottomTabChange} />
     </div>
   );
 }

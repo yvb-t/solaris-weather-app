@@ -1,11 +1,24 @@
 /* ============================================================
-   App.css — DailySky Weather Dashboard
-   Styled with User's Custom 4-Color Swatch Palette:
-   • #f5f7f8 — Pale Cloud Off-White
-   • #f4cf0c — Warm Sun Gold Yellow
-   • #475e56 — Deep Pine Sage Green
-   • #43454a — Deep Slate Charcoal
+   App.css — DailySky Premium Dark Glassmorphism Weather Theme
+   Moody, cinematic dark stormy atmospheric backdrop with
+   frosted-glass floating cards, glowing accents & soft lighting.
    ============================================================ */
+
+/* ── 1. COLOR PALETTE & DESIGN TOKENS ── */
+:root {
+  --bg: #0a0a0c;
+  --glass-bg: rgba(255, 255, 255, 0.06);
+  --glass-bg-strong: rgba(255, 255, 255, 0.10);
+  --glass-border: rgba(255, 255, 255, 0.14);
+  --glass-reflection: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 60%);
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.65);
+  --text-muted: rgba(255, 255, 255, 0.40);
+  --accent-sun: #ffc83d;
+  --accent-rain: #3b6cff;
+  --accent-moon: #8b6bff;
+  --font-family: "SF Pro Display", "Inter", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+}
 
 *, *::before, *::after {
   box-sizing: border-box;
@@ -13,111 +26,109 @@
   padding: 0;
 }
 
-:root {
-  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-
-  /* ── User's Custom 4 Colors ── */
-  --c-white: #f5f7f8;
-  --c-yellow: #f4cf0c;
-  --c-sage: #475e56;
-  --c-charcoal: #43454a;
-
-  /* ── Light Theme using Swatch ── */
-  --bg-color: #eef2f3;
-  --card-bg: #ffffff;
-  --card-border: rgba(71, 94, 86, 0.14);
-  --tile-bg: #f2f5f4;
-  --text-primary: #43454a;
-  --text-secondary: #475e56;
-  --text-muted: #72847e;
-  --accent-gold: #f4cf0c;
-  --accent-sage: #475e56;
-  --brand-icon-bg: #475e56;
-  --brand-icon-fg: #f4cf0c;
-  --card-shadow: 0 6px 24px -2px rgba(67, 69, 74, 0.08), 0 2px 6px -1px rgba(71, 94, 86, 0.05);
-  --track-bg: #e2e8e6;
-}
-
-.dark-theme {
-  --bg-color: #2b2e33;
-  --card-bg: #43454a;
-  --card-border: rgba(244, 207, 12, 0.16);
-  --tile-bg: #37393f;
-  --text-primary: #f5f7f8;
-  --text-secondary: #a3b8b1;
-  --text-muted: #849690;
-  --accent-gold: #f4cf0c;
-  --accent-sage: #6e8c81;
-  --brand-icon-bg: #f4cf0c;
-  --brand-icon-fg: #43454a;
-  --card-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.45);
-  --track-bg: #32353a;
-}
-
+/* ── 2. BACKGROUND: STORMY CLOUDS & GRADIENT OVERLAY ── */
 body {
   font-family: var(--font-family);
-  background-color: var(--bg-color);
+  background-color: var(--bg);
+  background-image:
+    /* Top stormy cloud atmospheric mass */
+    radial-gradient(ellipse 90% 55% at 50% -15%, rgba(65, 70, 85, 0.38), transparent 70%),
+    /* Mid left dark thunderstorm cloud */
+    radial-gradient(ellipse 70% 45% at 15% 35%, rgba(35, 42, 54, 0.55), transparent 65%),
+    /* Mid right moody cumulus cloud */
+    radial-gradient(ellipse 65% 50% at 85% 55%, rgba(28, 34, 45, 0.50), transparent 70%),
+    /* Deep bottom ambient ground cloud */
+    radial-gradient(ellipse 110% 75% at 50% 105%, rgba(18, 20, 26, 0.95), transparent 75%),
+    /* Desaturated stormy clouds texture synthesis */
+    radial-gradient(circle at 45% 40%, rgba(42, 44, 48, 0.35) 0%, transparent 60%),
+    radial-gradient(circle at 75% 20%, rgba(23, 24, 27, 0.6) 0%, transparent 50%),
+    /* Full-screen fixed dark vignette overlay */
+    linear-gradient(180deg, rgba(10, 10, 12, 0.55) 0%, rgba(0, 0, 0, 0.88) 100%);
+  background-attachment: fixed;
+  background-size: cover;
   color: var(--text-primary);
   min-height: 100vh;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
 }
 
-.app-container {
-  min-height: 100vh;
-  padding: 24px 32px 48px;
-  max-width: 1240px;
-  margin: 0 auto;
+/* Subtle atmospheric noise overlay pseudo-element */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+  z-index: 0;
 }
 
-/* ══════════════════════════════════════════════════════════
-   1. TOP NAVBAR
-   ══════════════════════════════════════════════════════════ */
+.app-container {
+  position: relative;
+  min-height: 100vh;
+  padding: 28px 24px 100px; /* Room for floating bottom nav */
+  max-width: 1220px;
+  margin: 0 auto;
+  z-index: 1;
+}
+
+/* ── 3. TOP NAVBAR ── */
 .navbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
+  animation: fadeInUp 0.5s ease both;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   user-select: none;
+  cursor: pointer;
 }
 
 .brand-icon {
   width: 40px;
   height: 40px;
-  border-radius: 12px;
-  background: var(--brand-icon-bg);
-  color: var(--brand-icon-fg);
+  border-radius: 50%;
+  background: var(--glass-bg-strong);
+  border: 1px solid var(--glass-border);
+  color: var(--accent-sun);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 14px rgba(71, 94, 86, 0.25);
-  transition: all 0.25s ease;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35), 0 0 16px rgba(255, 200, 61, 0.2);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.brand:hover .brand-icon {
+  transform: rotate(15deg) scale(1.05);
+  box-shadow: 0 0 24px rgba(255, 200, 61, 0.4);
 }
 
 .brand-icon svg {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
 }
 
 .brand-name {
-  font-size: 1.4rem;
-  font-weight: 800;
-  letter-spacing: -0.5px;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.3px;
   color: var(--text-primary);
 }
 
-/* ── Search Bar with Integrated GPS & Dropdown ── */
+/* ── Search Bar Glass Pill ── */
 .nav-search-container {
   position: relative;
   flex: 1;
-  max-width: 480px;
+  max-width: 460px;
 }
 
 .nav-search-form {
@@ -132,7 +143,7 @@ body {
 
 .nav-search-icon {
   position: absolute;
-  left: 15px;
+  left: 18px;
   width: 18px;
   height: 18px;
   color: var(--text-muted);
@@ -143,31 +154,40 @@ body {
 
 .nav-search-input {
   width: 100%;
-  padding: 11px 44px 11px 42px;
-  border-radius: 50px;
-  border: 1.5px solid var(--card-border);
-  background: var(--card-bg);
+  padding: 12px 48px 12px 46px;
+  border-radius: 999px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
   color: var(--text-primary);
-  font-size: 0.95rem;
+  font-size: 0.92rem;
+  font-family: inherit;
   outline: none;
-  box-shadow: var(--card-shadow);
-  transition: all 0.2s ease;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+}
+
+.nav-search-input::placeholder {
+  color: var(--text-muted);
+  font-weight: 400;
 }
 
 .nav-search-input:focus {
-  border-color: var(--c-sage);
-  box-shadow: 0 0 0 3px rgba(244, 207, 12, 0.35);
+  border-color: rgba(255, 255, 255, 0.35);
+  background: var(--glass-bg-strong);
+  box-shadow: 0 12px 45px rgba(0, 0, 0, 0.55), 0 0 20px rgba(255, 255, 255, 0.1);
 }
 
 .nav-gps-btn {
   position: absolute;
-  right: 6px;
-  width: 32px;
-  height: 32px;
+  right: 7px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  border: none;
-  background: var(--tile-bg);
-  color: var(--c-sage);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -176,8 +196,9 @@ body {
 }
 
 .nav-gps-btn:hover {
-  background: var(--c-yellow);
-  color: var(--c-charcoal);
+  background: rgba(255, 255, 255, 0.18);
+  color: var(--text-primary);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
 }
 
 .nav-gps-btn svg {
@@ -191,29 +212,32 @@ body {
   top: calc(100% + 8px);
   left: 0;
   right: 0;
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: 18px;
-  padding: 6px;
-  box-shadow: 0 14px 34px rgba(67, 69, 74, 0.18);
+  background: rgba(18, 19, 24, 0.88);
+  backdrop-filter: blur(28px) saturate(140%);
+  -webkit-backdrop-filter: blur(28px) saturate(140%);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 8px;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   z-index: 100;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
+  animation: fadeIn 0.2s ease;
 }
 
 .nav-dropdown-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  border-radius: 12px;
+  gap: 12px;
+  padding: 10px 16px;
+  border-radius: 14px;
   cursor: pointer;
   transition: background 0.15s ease;
 }
 
 .nav-dropdown-item:hover {
-  background: var(--tile-bg);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .dropdown-pin {
@@ -227,7 +251,7 @@ body {
 
 .dropdown-city {
   font-size: 0.92rem;
-  font-weight: 700;
+  font-weight: 500;
   color: var(--text-primary);
 }
 
@@ -236,7 +260,7 @@ body {
   color: var(--text-secondary);
 }
 
-/* ── Navbar Controls (Right) ── */
+/* ── Navbar Controls ── */
 .nav-controls {
   display: flex;
   align-items: center;
@@ -244,60 +268,62 @@ body {
 }
 
 .unit-toggle-btn {
-  padding: 9px 18px;
-  border-radius: 50px;
-  border: 1.5px solid var(--card-border);
-  background: var(--card-bg);
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
   color: var(--text-primary);
-  font-size: 0.88rem;
-  font-weight: 700;
+  font-size: 0.82rem;
+  font-weight: 500;
+  font-family: inherit;
   cursor: pointer;
-  box-shadow: var(--card-shadow);
-  transition: all 0.2s ease;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+  transition: all 0.25s ease;
 }
 
 .unit-toggle-btn:hover {
-  border-color: var(--c-yellow);
-  background: var(--tile-bg);
+  background: var(--glass-bg-strong);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.12);
 }
 
 .theme-toggle-btn {
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  border: 1.5px solid var(--card-border);
-  background: var(--card-bg);
-  color: var(--text-primary);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: var(--card-shadow);
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
 }
 
 .theme-toggle-btn:hover {
-  color: var(--c-yellow);
-  border-color: var(--c-yellow);
-}
-
-.theme-toggle-btn svg {
-  width: 19px;
-  height: 19px;
+  color: var(--text-primary);
+  background: var(--glass-bg-strong);
 }
 
 /* ── Error Banner ── */
 .error-banner {
   display: flex;
   align-items: center;
-  gap: 10px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  color: #dc2626;
-  padding: 12px 18px;
-  border-radius: 14px;
-  margin-bottom: 20px;
-  font-size: 0.95rem;
+  gap: 12px;
+  background: rgba(239, 68, 68, 0.18);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  backdrop-filter: blur(20px);
+  color: #fca5a5;
+  padding: 14px 20px;
+  border-radius: 20px;
+  margin-bottom: 24px;
+  font-size: 0.9rem;
+  animation: fadeIn 0.3s ease;
 }
 
 .error-icon {
@@ -313,17 +339,18 @@ body {
   align-items: center;
   justify-content: center;
   gap: 16px;
-  padding: 60px 0;
+  padding: 80px 0;
   color: var(--text-secondary);
 }
 
 .spinner {
   width: 44px;
   height: 44px;
-  border: 4px solid rgba(71, 94, 86, 0.15);
-  border-top-color: var(--c-yellow);
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--text-primary);
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  animation: spin 0.85s linear infinite;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
 }
 
 @keyframes spin {
@@ -331,7 +358,51 @@ body {
 }
 
 /* ══════════════════════════════════════════════════════════
-   2. MAIN DASHBOARD GRID (2 COLUMNS: 46% 54%)
+   4. FROSTED GLASS CARDS (.ds-card)
+   ══════════════════════════════════════════════════════════ */
+.ds-card {
+  position: relative;
+  background: var(--glass-bg);
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  border: 1px solid var(--glass-border);
+  border-radius: 28px;
+  padding: 26px 28px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+  overflow: hidden;
+}
+
+/* Subtle top-left light reflection overlay */
+.ds-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: var(--glass-reflection);
+  pointer-events: none;
+  border-radius: 28px 28px 0 0;
+}
+
+.ds-card:hover {
+  transform: translateY(-3px);
+  background: var(--glass-bg-strong);
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.card-section-title, .section-title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  text-transform: none; /* No uppercase */
+  letter-spacing: -0.2px;
+  margin-bottom: 16px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   5. DASHBOARD GRID (2-COLUMN DESKTOP / 1-COLUMN MOBILE)
    ══════════════════════════════════════════════════════════ */
 .dashboard-grid {
   display: grid;
@@ -343,55 +414,55 @@ body {
 .dashboard-col {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-}
-
-/* ── Common Card Surface ── */
-.ds-card {
-  background: var(--card-bg);
-  border-radius: 22px;
-  padding: 24px;
-  box-shadow: var(--card-shadow);
-  border: 1.5px solid var(--card-border);
-  transition: background-color 0.3s ease;
-}
-
-.card-section-title {
-  font-size: 0.78rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  margin-bottom: 16px;
+  gap: 22px;
 }
 
 /* ══════════════════════════════════════════════════════════
-   LEFT COLUMN: CARD 1 — CURRENT WEATHER
+   6. HERO / CURRENT WEATHER CARD
    ══════════════════════════════════════════════════════════ */
+.current-weather-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Ambient glow under hero card */
+.current-weather-card.glow-sun {
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45), 0 0 70px rgba(255, 200, 61, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+.current-weather-card.glow-rain {
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45), 0 0 70px rgba(59, 108, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
 .current-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 18px;
+}
+
+.city-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .city-title {
-  font-size: 1.95rem;
-  font-weight: 800;
-  line-height: 1.1;
+  font-size: 1.25rem;
+  font-weight: 500;
   color: var(--text-primary);
-  margin-bottom: 6px;
+  letter-spacing: -0.2px;
+  margin: 0;
 }
 
 .country-code {
-  font-weight: 700;
-  color: var(--c-sage);
+  color: var(--text-secondary);
+  font-weight: 400;
 }
 
 .city-subtitle {
-  font-size: 0.88rem;
+  font-size: 0.8rem;
   color: var(--text-secondary);
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .capitalize {
@@ -402,75 +473,137 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: var(--tile-bg);
-  border: 1px solid var(--card-border);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   color: var(--text-muted);
-  font-size: 0.78rem;
-  font-weight: 600;
+  font-size: 0.75rem;
+  font-weight: 500;
   cursor: pointer;
-  padding: 6px 10px;
-  border-radius: 20px;
+  padding: 5px 10px;
+  border-radius: 999px;
   transition: all 0.2s ease;
 }
 
 .refresh-btn:hover {
-  color: var(--c-charcoal);
-  border-color: var(--c-yellow);
-  background: var(--c-yellow);
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.18);
 }
 
 .refresh-icon {
-  width: 14px;
-  height: 14px;
+  width: 13px;
+  height: 13px;
 }
 
-.current-body {
+/* Centered Weather Art & Large Thin Temperature */
+.current-body-centered {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-}
-
-.temp-display {
-  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 12px;
+  justify-content: center;
+  padding: 12px 0 16px;
+  text-align: center;
+  gap: 10px;
 }
 
-.current-icon {
-  width: 80px;
-  height: 80px;
-  margin-left: -10px;
-  filter: drop-shadow(0 4px 10px rgba(244, 207, 12, 0.25));
+/* Gentle floating animation for 3D weather illustration */
+.hero-art-floating {
+  animation: floatWeather 4s ease-in-out infinite alternate;
+  filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.5));
+}
+
+@keyframes floatWeather {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(-6px); }
+}
+
+.hero-temp-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.big-temp-wrap {
+  display: inline-flex;
+  align-items: flex-start;
+  line-height: 0.85;
 }
 
 .big-temp {
-  font-size: 5rem;
-  font-weight: 900;
-  line-height: 0.9;
+  font-size: 5.2rem;
+  font-weight: 300; /* Thin/light as requested */
   letter-spacing: -2px;
   color: var(--text-primary);
 }
 
-.temp-stats {
-  text-align: right;
-  padding-bottom: 6px;
+.temp-degree {
+  font-size: 2.2rem;
+  font-weight: 300;
+  color: var(--text-secondary);
+  vertical-align: super;
+  margin-top: 4px;
+}
+
+.temp-stats-inline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
 }
 
 .feels-stat {
-  font-size: 0.95rem;
-  font-weight: 700;
+  font-size: 0.88rem;
   color: var(--text-secondary);
-  margin-bottom: 4px;
+  font-weight: 400;
 }
 
 .high-low-stat {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* ── 3 Equal Columns Stat Bar (No Dividers, Equal Spacing) ── */
+.hero-three-stats-bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 16px 12px;
+}
+
+.stat-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+}
+
+.stat-icon-wrap {
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2px;
+}
+
+.stat-value {
+  font-size: 1rem;
   font-weight: 600;
+  color: var(--text-primary);
+}
+
+.stat-label {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  font-weight: 500;
 }
 
 /* ══════════════════════════════════════════════════════════
-   LEFT COLUMN: CARD 2 — ATMOSPHERIC DETAILS (6 TILES)
+   7. ATMOSPHERIC DETAILS (6 TILES)
    ══════════════════════════════════════════════════════════ */
 .atmospheric-grid {
   display: grid;
@@ -479,46 +612,50 @@ body {
 }
 
 .atm-tile {
-  background: var(--tile-bg);
-  border-radius: 16px;
-  padding: 14px 16px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 15px 16px;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  border: 1px solid rgba(71, 94, 86, 0.08);
-  transition: transform 0.2s ease;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transition: transform 0.2s ease, background 0.2s ease;
 }
 
 .atm-tile:hover {
   transform: translateY(-2px);
-  border-color: rgba(244, 207, 12, 0.5);
+  background: var(--glass-bg-strong);
 }
 
 .atm-label-row {
   display: flex;
   align-items: center;
   gap: 6px;
-  color: var(--c-sage);
+  color: var(--text-secondary);
 }
 
 .atm-icon svg {
   width: 15px;
   height: 15px;
+  stroke-width: 1.5;
 }
 
 .atm-label {
   font-size: 0.78rem;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .atm-value {
   font-size: 1.05rem;
-  font-weight: 800;
+  font-weight: 600;
   color: var(--text-primary);
 }
 
 /* ══════════════════════════════════════════════════════════
-   LEFT COLUMN: CARD 3 — AIR QUALITY INDEX
+   8. AIR QUALITY INDEX CARD
    ══════════════════════════════════════════════════════════ */
 .aqi-header {
   display: flex;
@@ -534,32 +671,34 @@ body {
 .aqi-main-icon {
   width: 16px;
   height: 16px;
-  color: var(--c-sage);
+  color: var(--text-secondary);
 }
 
 .aqi-status-row {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .aqi-dot {
-  width: 11px;
-  height: 11px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
   box-shadow: 0 0 10px currentColor;
 }
 
 .aqi-label-text {
-  font-size: 1.05rem;
+  font-size: 0.98rem;
   color: var(--text-primary);
+  font-weight: 500;
 }
 
 .aqi-advice {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: var(--text-secondary);
   margin-bottom: 18px;
+  line-height: 1.4;
 }
 
 .aqi-metrics-grid {
@@ -569,52 +708,64 @@ body {
 }
 
 .aqi-metric-tile {
-  background: var(--tile-bg);
-  border-radius: 12px;
-  padding: 10px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 12px 8px;
   text-align: center;
   display: flex;
   flex-direction: column;
   gap: 4px;
-  border: 1px solid rgba(71, 94, 86, 0.08);
 }
 
 .aqi-sub-label {
   font-size: 0.72rem;
-  color: var(--c-sage);
-  font-weight: 700;
+  color: var(--text-muted);
+  font-weight: 500;
 }
 
 .aqi-sub-val {
-  font-size: 1.1rem;
-  font-weight: 800;
+  font-size: 1.05rem;
+  font-weight: 600;
   color: var(--text-primary);
 }
 
 /* ══════════════════════════════════════════════════════════
-   RIGHT COLUMN: CARD 1 — 24-HOUR TREND
+   9. HOURLY TREND CARD ("Today")
    ══════════════════════════════════════════════════════════ */
-.hourly-header, .daily-header {
+.hourly-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.title-with-icon {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 14px;
 }
 
-.hourly-header .card-section-title, .daily-header .card-section-title {
+.title-with-icon .section-title {
   margin-bottom: 0;
 }
 
 .hourly-title-icon, .daily-title-icon {
-  width: 16px;
-  height: 16px;
-  color: var(--c-sage);
+  width: 17px;
+  height: 17px;
+  color: var(--text-secondary);
+}
+
+.forecast-link-text {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-weight: 500;
 }
 
 .chart-container {
   width: 100%;
-  height: 90px;
-  margin-bottom: 8px;
+  height: 85px;
+  margin-bottom: 16px;
 }
 
 .trend-svg {
@@ -623,41 +774,76 @@ body {
   overflow: visible;
 }
 
-.hourly-grid {
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  text-align: center;
+/* Horizontal Scroll of Tall Pill Cards (width ~64px, radius 32px) */
+.hourly-pills-row {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 4px 2px 8px;
 }
 
-.hourly-col {
+.hourly-pills-row::-webkit-scrollbar {
+  height: 4px;
+}
+.hourly-pills-row::-webkit-scrollbar-track {
+  background: transparent;
+}
+.hourly-pills-row::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+}
+
+.hourly-tall-pill {
+  width: 64px;
+  min-width: 64px;
+  padding: 14px 6px;
+  border-radius: 32px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
+  flex-shrink: 0;
+  transition: all 0.25s ease;
 }
 
-.hourly-time {
-  font-size: 0.75rem;
+.hourly-tall-pill:hover {
+  transform: translateY(-2px);
+  background: var(--glass-bg-strong);
+}
+
+/* Active current hour: brighter glass fill + soft white glow */
+.hourly-tall-pill.current-active-hour {
+  background: var(--glass-bg-strong);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.pill-hour-time {
+  font-size: 0.72rem;
   color: var(--text-muted);
-  font-weight: 700;
+  font-weight: 500;
   white-space: nowrap;
 }
 
-.hourly-icon {
-  width: 36px;
-  height: 36px;
+.pill-icon-img {
+  width: 30px;
+  height: 30px;
 }
 
-.hourly-temp {
+.pill-hour-temp {
   font-size: 0.95rem;
-  font-weight: 800;
+  font-weight: 500;
   color: var(--text-primary);
 }
 
-.hourly-pop {
-  font-size: 0.72rem;
-  color: var(--c-sage);
-  font-weight: 700;
+.pill-hour-pop {
+  font-size: 0.68rem;
+  color: var(--accent-rain);
+  font-weight: 600;
 }
 
 .invisible-pop {
@@ -665,79 +851,147 @@ body {
 }
 
 /* ══════════════════════════════════════════════════════════
-   RIGHT COLUMN: CARD 2 — 5-DAY FORECAST
+   10. 7-DAY FORECAST LIST
    ══════════════════════════════════════════════════════════ */
-.daily-list {
+.daily-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.daily-list-clean {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px; /* Row spacing ~18px */
 }
 
-.daily-row {
+.daily-clean-row {
   display: grid;
-  grid-template-columns: 70px 40px 50px 35px 1fr 35px;
+  grid-template-columns: 85px 36px 1fr 85px;
   align-items: center;
   gap: 12px;
+  background: transparent; /* Transparent background */
+  border: none;            /* No row borders */
+  padding: 4px 0;
+  transition: transform 0.2s ease;
 }
 
-.daily-day {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: var(--text-primary);
+.daily-clean-row:hover {
+  transform: translateX(3px);
 }
 
-.daily-icon-wrapper {
+.daily-day-name {
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--text-primary); /* White day name */
+}
+
+.daily-icon-slot {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.daily-icon {
-  width: 34px;
-  height: 34px;
+.daily-cond-text {
+  font-size: 0.85rem;
+  color: var(--text-muted); /* Muted condition text */
+  font-weight: 400;
 }
 
-.daily-pop-col {
-  text-align: left;
+.daily-temp-values {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  font-size: 0.9rem;
 }
 
-.daily-pop {
-  font-size: 0.75rem;
-  color: var(--c-sage);
-  font-weight: 700;
-}
-
-.daily-min-temp {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: var(--text-secondary);
-  text-align: right;
-}
-
-.temp-bar-track {
-  position: relative;
-  height: 6px;
-  border-radius: 10px;
-  background: var(--track-bg);
-  overflow: hidden;
-}
-
-.temp-bar-fill {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  border-radius: 10px;
-}
-
-.daily-max-temp {
-  font-size: 0.95rem;
-  font-weight: 800;
+.temp-high-val {
   color: var(--text-primary);
-  text-align: left;
+  font-weight: 600;
+}
+
+.temp-low-val {
+  color: var(--text-muted); /* Muted low temp */
+  font-weight: 400;
 }
 
 /* ══════════════════════════════════════════════════════════
-   RESPONSIVE DESIGN (TABLET & MOBILE)
+   11. FLOATING GLASS BOTTOM NAVIGATION BAR
+   ══════════════════════════════════════════════════════════ */
+.ios-bottom-nav {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 290px;
+  height: 58px;
+  background: rgba(20, 22, 28, 0.72);
+  backdrop-filter: blur(28px) saturate(140%);
+  -webkit-backdrop-filter: blur(28px) saturate(140%);
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 10px;
+  z-index: 100;
+  box-shadow: 0 14px 45px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.nav-circle-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  background: rgba(0, 0, 0, 0.35); /* Inactive dark circle */
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.nav-circle-btn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* Active button: lighter frosted circle with subtle inner highlight */
+.nav-circle-btn.active {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: var(--text-primary);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.25), 0 0 14px rgba(255, 255, 255, 0.15);
+}
+
+/* ══════════════════════════════════════════════════════════
+   12. FADE-IN & STAGGERED ENTRANCE ANIMATIONS
+   ══════════════════════════════════════════════════════════ */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.dashboard-col .ds-card:nth-child(1) { animation: fadeInUp 0.45s ease both; }
+.dashboard-col .ds-card:nth-child(2) { animation: fadeInUp 0.45s ease 0.06s both; }
+.dashboard-col .ds-card:nth-child(3) { animation: fadeInUp 0.45s ease 0.12s both; }
+
+/* ══════════════════════════════════════════════════════════
+   13. RESPONSIVE BREAKPOINTS (MOBILE & DESKTOP)
    ══════════════════════════════════════════════════════════ */
 @media (max-width: 960px) {
   .dashboard-grid {
@@ -753,23 +1007,41 @@ body {
     max-width: 100%;
     width: 100%;
   }
+
+  .big-temp {
+    font-size: 4.4rem;
+  }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 480px) {
   .app-container {
-    padding: 16px 14px 32px;
+    padding: 18px 14px 100px;
+    max-width: 430px; /* Centered mobile width */
   }
 
-  .atmospheric-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .ds-card {
+    padding: 20px 18px;
+    border-radius: 24px;
   }
 
   .big-temp {
     font-size: 3.8rem;
   }
 
-  .daily-row {
-    grid-template-columns: 55px 32px 40px 30px 1fr 30px;
+  .atmospheric-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .aqi-metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .daily-clean-row {
+    grid-template-columns: 75px 32px 1fr 70px;
     gap: 8px;
+  }
+
+  .ios-bottom-nav {
+    width: 86%;
   }
 }

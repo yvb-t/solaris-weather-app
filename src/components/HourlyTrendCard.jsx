@@ -1,6 +1,8 @@
 // ============================================================
-// HourlyTrendCard.jsx — 24-Hour Trend Card
-// Uses the user's custom color palette: #f4cf0c, #475e56, #43454a, #f5f7f8
+// HourlyTrendCard.jsx — 24-Hour Trend & Hourly Pill Strip ("Today")
+// Features: Smooth SVG curve with gradient fill +
+// Horizontal tall glass pills (width ~64px, radius 32px) with
+// current hour highlight and soft white glow.
 // ============================================================
 
 function HourlyTrendCard({ hourly }) {
@@ -46,52 +48,56 @@ function HourlyTrendCard({ hourly }) {
 
   return (
     <div className="ds-card hourly-card">
+      {/* ── Section Title Row: "Today" on left, "7-Day Forecasts" link on right ── */}
       <div className="hourly-header">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="hourly-title-icon">
-          <circle cx="12" cy="12" r="10" />
-          <polyline points="12 6 12 12 16 14" />
-        </svg>
-        <h3 className="card-section-title">24-HOUR TREND</h3>
+        <div className="title-with-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="hourly-title-icon">
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+          </svg>
+          <h3 className="section-title">Today</h3>
+        </div>
+        <span className="forecast-link-text">24-Hour Trend</span>
       </div>
 
-      {/* ── Smooth SVG Temperature Trend Line (Palette Gold & Sage) ── */}
+      {/* ── Smooth SVG Wave Line ── */}
       <div className="chart-container">
         <svg viewBox={`0 0 ${width} ${height}`} className="trend-svg" preserveAspectRatio="none">
           <defs>
             <linearGradient id="trendGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#f4cf0c" stopOpacity="0.45" />
-              <stop offset="100%" stopColor="#f4cf0c" stopOpacity="0.0" />
+              <stop offset="0%" stopColor="#3b6cff" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="#3b6cff" stopOpacity="0.0" />
             </linearGradient>
           </defs>
-          {/* Gradient area */}
           <path d={areaPath} fill="url(#trendGradient)" />
-          {/* Smooth line */}
-          <path d={linePath} fill="none" stroke="#f4cf0c" strokeWidth="3.2" strokeLinecap="round" />
-          {/* Data point dots */}
+          <path d={linePath} fill="none" stroke="rgba(255, 255, 255, 0.7)" strokeWidth="2.5" strokeLinecap="round" />
           {points.map((pt, i) => (
-            <circle key={i} cx={pt.x} cy={pt.y} r="4" fill="#475e56" stroke="#f4cf0c" strokeWidth="2" />
+            <circle key={i} cx={pt.x} cy={pt.y} r="3.5" fill="#ffffff" stroke="rgba(59, 108, 255, 0.8)" strokeWidth="2" />
           ))}
         </svg>
       </div>
 
-      {/* ── Hourly Forecast Columns ── */}
-      <div className="hourly-grid">
-        {hourly.map((h, idx) => (
-          <div key={idx} className="hourly-col">
-            <span className="hourly-time">{h.time}</span>
-            <img
-              src={`https://openweathermap.org/img/wn/${h.icon}.png`}
-              alt={h.condition}
-              className="hourly-icon"
-            />
-            <span className="hourly-temp">{h.temp}°</span>
-            {h.pop > 0 ? (
-              <span className="hourly-pop">{h.pop}%</span>
-            ) : (
-              <span className="hourly-pop invisible-pop">0%</span>
-            )}
-          </div>
-        ))}
+      {/* ── Horizontal Scroll of Tall Glass Pill Cards (width ~64px, radius 32px) ── */}
+      <div className="hourly-pills-row">
+        {hourly.map((h, idx) => {
+          const isCurrent = idx === 0;
+          return (
+            <div key={idx} className={`hourly-tall-pill ${isCurrent ? "current-active-hour" : ""}`}>
+              <span className="pill-hour-time">{h.time}</span>
+              <img
+                src={`https://openweathermap.org/img/wn/${h.icon}.png`}
+                alt={h.condition}
+                className="pill-icon-img"
+              />
+              <span className="pill-hour-temp">{h.temp}°</span>
+              {h.pop > 0 ? (
+                <span className="pill-hour-pop">{h.pop}%</span>
+              ) : (
+                <span className="pill-hour-pop invisible-pop">0%</span>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
