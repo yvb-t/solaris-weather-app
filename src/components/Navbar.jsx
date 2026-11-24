@@ -1,14 +1,25 @@
 // ============================================================
-// Navbar.jsx — DailySky Top Navigation Bar
-// Exact match to sample screenshot: Brand, Search with embedded GPS,
-// Autocomplete dropdown for 100% accurate city selection,
-// Unit Toggle (°C / km/h), and Dark/Light Mode button.
+// Navbar.jsx — Solaris Top Navigation Bar
+// Brand, Search with embedded GPS & Autocomplete dropdown,
+// Unit Toggle (°C / km/h), Theme Mode button, and User Profile / Auth button.
 // ============================================================
 
 import { useState, useEffect, useRef } from "react";
 import { searchCitySuggestions } from "../services/weatherApi";
 
-function Navbar({ onSearch, onSelectSuggestion, onLiveLocation, units, onToggleUnits, isDark, onToggleTheme }) {
+function Navbar({
+  onSearch,
+  onSelectSuggestion,
+  onLiveLocation,
+  isLocating = false,
+  units,
+  onToggleUnits,
+  isDark = true,
+  onToggleTheme,
+  currentUser,
+  onOpenAuth,
+  onResetHome
+}) {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -26,7 +37,7 @@ function Navbar({ onSearch, onSelectSuggestion, onLiveLocation, units, onToggleU
       const results = await searchCitySuggestions(query);
       setSuggestions(results);
       setShowDropdown(results.length > 0);
-    }, 250);
+    }, 220);
 
     return () => clearTimeout(timer);
   }, [query]);
@@ -65,7 +76,12 @@ function Navbar({ onSearch, onSelectSuggestion, onLiveLocation, units, onToggleU
   return (
     <header className="navbar">
       {/* ── Brand Logo ── */}
-      <div className="brand" onClick={() => onSearch("Kurchatov")} style={{ cursor: "pointer" }}>
+      <div
+        className="brand"
+        onClick={onResetHome || (() => onSearch("Kurchatov"))}
+        title="Solaris Weather — Click to return to Home"
+        style={{ cursor: "pointer" }}
+      >
         <div className="brand-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="4" />
@@ -86,12 +102,17 @@ function Navbar({ onSearch, onSelectSuggestion, onLiveLocation, units, onToggleU
       <div className="nav-search-container" ref={searchWrapperRef}>
         <form className="nav-search-form" onSubmit={handleSubmit}>
           <div className="nav-search-wrapper">
-            <span className="nav-search-icon" aria-hidden="true">
+            <button
+              type="submit"
+              className="nav-search-submit-btn"
+              title="Search"
+              aria-label="Submit search"
+            >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="11" cy="11" r="8" />
                 <line x1="21" y1="21" x2="16.65" y2="16.65" />
               </svg>
-            </span>
+            </button>
 
             <input
               type="text"
@@ -105,9 +126,9 @@ function Navbar({ onSearch, onSelectSuggestion, onLiveLocation, units, onToggleU
 
             <button
               type="button"
-              className="nav-gps-btn"
+              className={`nav-gps-btn ${isLocating ? "locating-spin" : ""}`}
               onClick={onLiveLocation}
-              title="Use current GPS location"
+              title={isLocating ? "Finding your coordinates..." : "Use current GPS location"}
               aria-label="Use current location"
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -144,7 +165,7 @@ function Navbar({ onSearch, onSelectSuggestion, onLiveLocation, units, onToggleU
         )}
       </div>
 
-      {/* ── Right Controls: Unit Toggle & Dark Mode Toggle ── */}
+      {/* ── Right Controls: Unit Toggle, Theme Toggle & Profile Button ── */}
       <div className="nav-controls">
         <button
           type="button"
@@ -159,11 +180,11 @@ function Navbar({ onSearch, onSelectSuggestion, onLiveLocation, units, onToggleU
           type="button"
           className="theme-toggle-btn"
           onClick={onToggleTheme}
-          title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
-          aria-label="Toggle theme"
+          title={isDark ? "Switch to Aurora Glow Mode" : "Switch to Midnight Storm Mode"}
+          aria-label="Toggle theme mode"
         >
           {isDark ? (
-            /* Sun icon */
+            /* Sun / Amber ambient icon */
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="5" />
               <line x1="12" y1="1" x2="12" y2="3" />
@@ -180,6 +201,29 @@ function Navbar({ onSearch, onSelectSuggestion, onLiveLocation, units, onToggleU
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
             </svg>
+          )}
+        </button>
+
+        {/* Profile / Auth Button in Navbar */}
+        <button
+          type="button"
+          className="nav-profile-btn"
+          onClick={onOpenAuth}
+          title={currentUser ? `Signed in as ${currentUser.name}` : "Sign In / Profile"}
+        >
+          {currentUser ? (
+            <div className="nav-profile-badge">
+              <span className="profile-badge-avatar">{currentUser.avatar || "👤"}</span>
+              <span className="profile-badge-name">{currentUser.name.split(" ")[0]}</span>
+            </div>
+          ) : (
+            <div className="nav-login-pill">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+              <span>Sign In</span>
+            </div>
           )}
         </button>
       </div>

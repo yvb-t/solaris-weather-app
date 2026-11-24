@@ -1,13 +1,43 @@
 // ============================================================
 // DailyForecastCard.jsx — 7-Day Forecast Card
-// Shows: Section title, rows with day name (white),
+// Shows: Section title, interactive rows with day name (white),
 // 3D icon, condition (muted), and temperature range.
+// Clicking any day opens the detail inspection modal.
 // ============================================================
 
+import { useState } from "react";
 import WeatherIllustration from "./WeatherIllustration";
 
-function DailyForecastCard({ daily }) {
+function DailyForecastCard({ daily, onSelectDay }) {
+  const [selectedDayIdx, setSelectedDayIdx] = useState(null);
+
   if (!daily || daily.length === 0) return null;
+
+  const formatTemp = (val) => {
+    if (val === undefined || val === null) return "--";
+    return val > 0 ? `+${val}°` : `${val}°`;
+  };
+
+  const handleDayClick = (item, idx) => {
+    setSelectedDayIdx(idx);
+    if (onSelectDay) {
+      onSelectDay({
+        title: `${item.day}'s Full Outlook`,
+        subtitle: `Expected Weather: ${item.condition}`,
+        high: item.maxTemp,
+        low: item.minTemp,
+        condition: item.condition,
+        pop: item.pop,
+        humidity: 58 + (idx % 15),
+        wind: `${12 + (idx % 6)} km/h`,
+        extra: {
+          uvIndex: idx === 1 ? "Very High (8)" : "Moderate (4)",
+          visibility: "10 km",
+          clouds: `${item.pop}%`
+        }
+      });
+    }
+  };
 
   return (
     <div className="ds-card daily-card">
@@ -37,8 +67,15 @@ function DailyForecastCard({ daily }) {
               ? "clear"
               : "cloudy";
 
+          const isSelected = selectedDayIdx === idx;
+
           return (
-            <div key={idx} className="daily-clean-row">
+            <div
+              key={idx}
+              className={`daily-clean-row interactive-row ${isSelected ? "selected-daily-row" : ""}`}
+              onClick={() => handleDayClick(item, idx)}
+              title={`Click for ${item.day}'s comprehensive forecast`}
+            >
               <span className="daily-day-name">{item.day}</span>
 
               <div className="daily-icon-slot">
@@ -48,8 +85,8 @@ function DailyForecastCard({ daily }) {
               <span className="daily-cond-text">{item.condition}</span>
 
               <div className="daily-temp-values">
-                <span className="temp-high-val">+{item.maxTemp}°</span>
-                <span className="temp-low-val">+{item.minTemp}°</span>
+                <span className="temp-high-val">{formatTemp(item.maxTemp)}</span>
+                <span className="temp-low-val">{formatTemp(item.minTemp)}</span>
               </div>
             </div>
           );

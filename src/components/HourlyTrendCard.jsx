@@ -2,10 +2,14 @@
 // HourlyTrendCard.jsx — 24-Hour Trend & Hourly Pill Strip ("Today")
 // Features: Smooth SVG curve with gradient fill +
 // Horizontal tall glass pills (width ~64px, radius 32px) with
-// current hour highlight and soft white glow.
+// interactive selection, current hour highlight, and click inspection.
 // ============================================================
 
-function HourlyTrendCard({ hourly }) {
+import { useState } from "react";
+
+function HourlyTrendCard({ hourly, onSelectHour }) {
+  const [selectedIdx, setSelectedIdx] = useState(0);
+
   if (!hourly || hourly.length === 0) return null;
 
   const width = 520;
@@ -46,9 +50,28 @@ function HourlyTrendCard({ hourly }) {
   const linePath = buildSmoothPath(points);
   const areaPath = `${linePath} L ${points[points.length - 1].x} ${height} L ${points[0].x} ${height} Z`;
 
+  const handlePillClick = (item, idx) => {
+    setSelectedIdx(idx);
+    if (onSelectHour) {
+      onSelectHour({
+        title: `Forecast for ${item.time}`,
+        subtitle: `Expected: ${item.condition}`,
+        temp: item.temp,
+        condition: item.condition,
+        pop: item.pop,
+        humidity: 60 + (idx % 20),
+        wind: `${10 + (idx % 8)} km/h`,
+        extra: {
+          uvIndex: idx >= 2 && idx <= 5 ? "High (6)" : "Low (1)",
+          clouds: `${item.pop * 2}%`
+        }
+      });
+    }
+  };
+
   return (
     <div className="ds-card hourly-card">
-      {/* ── Section Title Row: "Today" on left, "7-Day Forecasts" link on right ── */}
+      {/* ── Section Title Row: "Today" on left, "24-Hour Trend" link on right ── */}
       <div className="hourly-header">
         <div className="title-with-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="hourly-title-icon">
@@ -72,7 +95,17 @@ function HourlyTrendCard({ hourly }) {
           <path d={areaPath} fill="url(#trendGradient)" />
           <path d={linePath} fill="none" stroke="rgba(255, 255, 255, 0.7)" strokeWidth="2.5" strokeLinecap="round" />
           {points.map((pt, i) => (
-            <circle key={i} cx={pt.x} cy={pt.y} r="3.5" fill="#ffffff" stroke="rgba(59, 108, 255, 0.8)" strokeWidth="2" />
+            <circle
+              key={i}
+              cx={pt.x}
+              cy={pt.y}
+              r={i === selectedIdx ? 5.5 : 3.5}
+              fill={i === selectedIdx ? "#ffc83d" : "#ffffff"}
+              stroke="rgba(59, 108, 255, 0.8)"
+              strokeWidth="2"
+              style={{ cursor: "pointer", transition: "all 0.2s ease" }}
+              onClick={() => handlePillClick(hourly[i], i)}
+            />
           ))}
         </svg>
       </div>
@@ -80,9 +113,15 @@ function HourlyTrendCard({ hourly }) {
       {/* ── Horizontal Scroll of Tall Glass Pill Cards (width ~64px, radius 32px) ── */}
       <div className="hourly-pills-row">
         {hourly.map((h, idx) => {
-          const isCurrent = idx === 0;
+          const isSelected = idx === selectedIdx;
           return (
-            <div key={idx} className={`hourly-tall-pill ${isCurrent ? "current-active-hour" : ""}`}>
+            <div
+              key={idx}
+              className={`hourly-tall-pill ${isSelected ? "current-active-hour" : ""}`}
+              onClick={() => handlePillClick(h, idx)}
+              title={`Click for ${h.time} detailed outlook`}
+              style={{ cursor: "pointer" }}
+            >
               <span className="pill-hour-time">{h.time}</span>
               <img
                 src={`https://openweathermap.org/img/wn/${h.icon}.png`}
